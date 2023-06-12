@@ -29,7 +29,12 @@ const SinglePlaylistInfo = styled.View`
   margin-vertical: 5px;
 `;
 
-export const SinglePlaylist = ({ title, imageUrl, totalSongs }) => {
+export const SinglePlaylist = ({
+  title,
+  imageUrl,
+  totalSongs,
+  playlistHref,
+}) => {
   return (
     <SinglePlaylistView>
       <SinglePlaylistTitle>Convert Playlist</SinglePlaylistTitle>
@@ -39,6 +44,7 @@ export const SinglePlaylist = ({ title, imageUrl, totalSongs }) => {
         <View style={{ flex: 1 }}>
           <Text style={{ color: "white", fontSize: 20 }}>{title} </Text>
           <Text style={{ color: "white" }}>{totalSongs} songs</Text>
+          <Text style={{ color: "white" }}>{playlistHref}</Text>
         </View>
       </SinglePlaylistInfo>
       <Button

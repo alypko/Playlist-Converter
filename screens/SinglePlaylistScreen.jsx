@@ -2,9 +2,10 @@ import React from "react";
 import { StyleSheet, View } from "react-native";
 import { SinglePlaylist } from "../components/SinglePlaylist";
 import { useSelector } from "react-redux";
+import { Button } from "@rneui/base";
 
 const SinglePlaylistScreen = ({ route }) => {
-  const { title, imageUrl, totalSongs } = route.params;
+  const { title, imageUrl, totalSongs, playlistHref } = route.params;
   return (
     <View style={styles.container}>
       <SinglePlaylist
@@ -12,6 +13,7 @@ const SinglePlaylistScreen = ({ route }) => {
         imageUrl={imageUrl}
         totalSongs={totalSongs}
       />
+      <Button title="START" style={styles.button} />
     </View>
   );
 };
@@ -25,5 +27,9 @@ const styles = StyleSheet.create({
     paddingTop: 100,
     padding: 5,
     backgroundColor: "black",
+  },
+  button: {
+    width: 200,
+    marginTop: 50,
   },
 });

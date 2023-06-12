@@ -24,6 +24,7 @@ const PlaylistsScreen = ({ navigation }) => {
                 title: item.name,
                 imageUrl: item.images[0].url,
                 totalSongs: item.tracks.total,
+                playlistHref: item.href,
               })
             }
           >
@@ -31,7 +32,6 @@ const PlaylistsScreen = ({ navigation }) => {
               title={item.name}
               imageUrl={item.images[0].url}
               totalSongs={item.tracks.total}
-              playlistHref={item.href}
             />
           </TouchableOpacity>
           <Separator />

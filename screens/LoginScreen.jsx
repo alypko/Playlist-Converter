@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, KeyboardAvoidingView } from "react-native";
 import React from "react";
 import { useAuthRequest, ResponseType } from "expo-auth-session";
+import * as Google from "expo-auth-session/providers/google";
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Button } from "@rneui/base";
@@ -16,19 +17,26 @@ const discovery = {
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const [token, setToken] = useState("");
-  const [request, response, promptAsync1] = useAuthRequest(
+  const [youtubeToken, setYoutubeToken] = useState("");
+  const [userInfo, setUserInfo] = useState(null);
+
+  const [youtubeRequest, youtubeResponse, promptAsync2] = Google.useAuthRequest(
+    {
+      scopes: ["https://www.googleapis.com/auth/youtube.readonly"],
+      androidClientId:
+        "789188389856-qrdu3nv47n5p5c0r95egvuvq43378bob.apps.googleusercontent.com",
+      iosClientId:
+        "789188389856-c27rki6kcpp2qno9lpt3ec1u9hn06qsu.apps.googleusercontent.com",
+      clientId:
+        "789188389856-j73o46dmaqcp4fnuskf6jsbpi3ps67m0.apps.googleusercontent.com",
+    }
+  );
+
+  const [request, spotifyResponse, promptAsync1] = useAuthRequest(
     {
       responseType: ResponseType.Token,
       clientId: "dc8ef814556f4350bcec9238c0ea7ffa",
-      scopes: [
-        "playlist-read-private",
-        "playlist-read-collaborative",
-        "user-top-read",
-        "user-library-read",
-        "user-modify-playback-state",
-        "user-read-email",
-        "user-read-private",
-      ],
+      scopes: ["playlist-read-private"],
       // In order to follow the "Authorization Code Flow" to fetch token after authorizationEndpoint
       // this must be set to false
       usePKCE: false,
@@ -38,32 +46,65 @@ const LoginScreen = ({ navigation }) => {
   );
 
   useEffect(() => {
-    if (response?.type === "success") {
-      const { access_token } = response.params;
-      setToken(access_token);
-    }
-  }, [response]);
+    if (
+      spotifyResponse?.type === "success" &&
+      youtubeResponse?.type === "success"
+    ) {
+      setYoutubeToken(youtubeResponse.authentication.accessToken);
+      setToken(spotifyResponse.params.access_token);
 
-  useEffect(() => {
-    console.log("token", token);
-    if (token) {
-      axios("https://api.spotify.com/v1/me/playlists?limit=50", {
+      // console.log("token", token);
+      // console.log("youtube token", youtubeToken);
+    }
+  }, [spotifyToken, youtubeToken, youtubeResponse, spotifyResponse]);
+
+  const getUserInfo = async () => {
+    console.log("youtube token", youtubeToken);
+    await axios(
+      "https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&maxResults=25&mine=true",
+      {
         method: "GET",
         headers: {
+          Authorization: "Bearer " + youtubeToken,
           Accept: "application/json",
           "Content-Type": "application/json",
-          Authorization: "Bearer " + token,
         },
+      }
+    )
+      .then((response) => {
+        const user = response.data;
+        //console.log("user", user.items[0].snippet.title);
+        setUserInfo(user);
       })
-        .then((response) => {
-          const { items } = response.data;
-          //console.log(items);
-          dispatch(spotifyPlaylists(items));
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
+      .catch((error) => {
+        console.log("error Youtube", error.response.data);
+      });
+    dispatch(spotifyToken(token));
+  };
 
+  const getUserPlaylists = async () => {
+    await axios("https://api.spotify.com/v1/me/playlists?limit=50", {
+      method: "GET",
+      headers: {
+        Authorization: "Bearer " + token,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        const { items } = response.data;
+        //console.log(items);
+        dispatch(spotifyPlaylists(items));
+      })
+      .catch((error) => {
+        console.log("error", error.response.data);
+      });
+  };
+
+  useEffect(() => {
+    if (token && youtubeToken) {
+      getUserInfo();
+      getUserPlaylists();
       setTimeout(
         () =>
           navigation.navigate("Playlists", {
@@ -72,11 +113,11 @@ const LoginScreen = ({ navigation }) => {
           }),
         500
       );
-
-      dispatch(spotifyToken(token));
-      //console.log("access token", token);
     }
-  }, [token]);
+
+    // console.log("token", token);
+    // console.log("access token", token);
+  }, [token, youtubeToken]);
 
   return (
     <KeyboardAvoidingView behavior="padding" style={styles.container}>
@@ -93,9 +134,18 @@ const LoginScreen = ({ navigation }) => {
       </Text>
       <Button
         title="Login with Spotify"
+        disabled={!request}
         style={styles.button}
         onPress={() => {
           promptAsync1();
+        }}
+      />
+      <Button
+        title="Login with Google"
+        disabled={!youtubeRequest}
+        style={styles.button}
+        onPress={() => {
+          promptAsync2();
         }}
       />
       <View style={{ height: 100 }} />

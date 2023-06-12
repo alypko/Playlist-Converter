@@ -29,7 +29,7 @@ const PLaylistTitle = styled.Text`
   color: white;
 `;
 
-export const Playlist = ({ title, imageUrl, totalSongs, playlistHref }) => {
+export const Playlist = ({ title, imageUrl, totalSongs }) => {
   return (
     <PlaylistView>
       <PlaylistImage source={{ uri: imageUrl }} />
