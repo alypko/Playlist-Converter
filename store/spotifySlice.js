@@ -2,8 +2,10 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   token: "",
+  youtubeToken: "",
   userId: "",
   playlists: [],
+  tracks: [],
 };
 
 export const spotifySlice = createSlice({
@@ -13,16 +15,23 @@ export const spotifySlice = createSlice({
     spotifyToken: (state, action) => {
       state.token = action.payload;
     },
-    spotifyUserId: (state, action) => {
-      state.userId = action.payload;
+    youtubeTokenStore: (state, action) => {
+      state.youtubeToken = action.payload;
     },
     spotifyPlaylists: (state, action) => {
       state.playlists = action.payload;
     },
+    spotifyTracks: (state, action) => {
+      state.tracks = action.payload;
+    },
   },
 });
 
-export const { spotifyToken, spotifyUserId, spotifyPlaylists } =
-  spotifySlice.actions;
+export const {
+  spotifyToken,
+  youtubeTokenStore,
+  spotifyPlaylists,
+  spotifyTracks,
+} = spotifySlice.actions;
 
 export default spotifySlice.reducer;

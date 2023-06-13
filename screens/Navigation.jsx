@@ -3,6 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import LoginScreen from "./LoginScreen";
 import PlaylistsScreen from "./PlaylistsScreen";
 import SinglePlaylistScreen from "./SinglePlaylistScreen";
+import ConvertScreen from "./ConvertScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -33,6 +34,11 @@ const Navigation = () => {
         <Stack.Screen
           name="SinglePlaylist"
           component={SinglePlaylistScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Convert"
+          component={ConvertScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

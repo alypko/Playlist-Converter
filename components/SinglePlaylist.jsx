@@ -44,7 +44,6 @@ export const SinglePlaylist = ({
         <View style={{ flex: 1 }}>
           <Text style={{ color: "white", fontSize: 20 }}>{title} </Text>
           <Text style={{ color: "white" }}>{totalSongs} songs</Text>
-          <Text style={{ color: "white" }}>{playlistHref}</Text>
         </View>
       </SinglePlaylistInfo>
       <Button
