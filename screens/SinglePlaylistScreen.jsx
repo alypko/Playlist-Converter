@@ -6,6 +6,7 @@ import { Button } from "@rneui/base";
 import { spotifyTracks } from "../store/spotifySlice";
 import axios from "axios";
 
+
 const SinglePlaylistScreen = ({ route, navigation }) => {
   const { title, imageUrl, totalSongs, playlistHref } = route.params;
 
@@ -14,6 +15,9 @@ const SinglePlaylistScreen = ({ route, navigation }) => {
   const token = useSelector((state) => state.spotify.token);
 
   const [tracks, setTracks] = useState([]);
+  const [newTitle, setNewTitle] = useState(title);
+
+  
 
   const getPlaylistTracks = useCallback(async () => {
     try {
@@ -37,6 +41,7 @@ const SinglePlaylistScreen = ({ route, navigation }) => {
   }, [token]);
 
   useEffect(() => {
+    console.log("useEffect1");
     getPlaylistTracks();
   }, [getPlaylistTracks]);
 
@@ -45,28 +50,30 @@ const SinglePlaylistScreen = ({ route, navigation }) => {
 
     (tracks || []).forEach((element) => {
       formattedTracks.push(
-        `${element.track.artists[0].name}%20${element.track.name}`
+        `${element.track.artists[0].name} ${element.track.name}`
       );
     });
     dispatch(spotifyTracks(formattedTracks));
+    console.log("formattedTracks", formattedTracks);
   }, [tracks]);
 
   useEffect(() => {
+    console.log("useEffect2");
     formatTracks();
   }, [formatTracks]);
 
   return (
     <View style={styles.container}>
       <SinglePlaylist
-        title={title}
+        stateChanger={setNewTitle}  
+        title={newTitle}
         imageUrl={imageUrl}
         totalSongs={totalSongs}
-        playlistHref={playlistHref}
       />
       <Button
         title="START"
         style={styles.button}
-        onPress={() => navigation.navigate("Convert", { title })}
+        onPress={() => navigation.navigate("Convert", { newTitle })}
       />
     </View>
   );

@@ -23,7 +23,7 @@ const LoginScreen = ({ navigation }) => {
 
   const [youtubeRequest, youtubeResponse, promptAsync2] = Google.useAuthRequest(
     {
-      scopes: ["https://www.googleapis.com/auth/youtube"],
+      scopes: ["https://www.googleapis.com/auth/youtube", "https://www.googleapis.com/auth/youtube.force-ssl"],
       androidClientId:
         "789188389856-qrdu3nv47n5p5c0r95egvuvq43378bob.apps.googleusercontent.com",
       iosClientId:
@@ -54,33 +54,35 @@ const LoginScreen = ({ navigation }) => {
       setYoutubeToken(youtubeResponse.authentication.accessToken);
       setToken(spotifyResponse.params.access_token);
 
+      
+
       // console.log("token", token);
       // console.log("youtube token", youtubeToken);
     }
   }, [youtubeResponse, spotifyResponse]);
 
-  const getUserInfo = useCallback(async () => {
-    //console.log("youtube token", youtubeToken);
-    try {
-      const response = await axios(
-        "https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&maxResults=25&mine=true",
-        {
-          method: "GET",
-          headers: {
-            Authorization: "Bearer " + youtubeToken,
-            Accept: "application/json",
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  // const getUserInfo = useCallback(async () => {
+  //   //console.log("youtube token", youtubeToken);
+  //   try {
+  //     const response = await axios(
+  //       "https://youtube.googleapis.com/youtube/v3/playlists?part=snippet&maxResults=25&mine=true",
+  //       {
+  //         method: "GET",
+  //         headers: {
+  //           Authorization: "Bearer " + youtubeToken,
+  //           Accept: "application/json",
+  //           "Content-Type": "application/json",
+  //         },
+  //       }
+  //     );
 
-      const { user } = response.data;
-      //console.log("user", user.items[0].snippet.title);
-      //setUserInfo(user);
-    } catch (error) {
-      console.log("error getUserYoutube Youtube", error.response.data);
-    }
-  }, [youtubeToken]);
+  //     const { user } = response.data;
+  //     //console.log("user", user.items[0].snippet.title);
+  //     //setUserInfo(user);
+  //   } catch (error) {
+  //     console.log("error getUserYoutube Youtube", error.response.data);
+  //   }
+  // }, [youtubeToken]);
 
   const getUserPlaylists = useCallback(async () => {
     try {
@@ -100,7 +102,7 @@ const LoginScreen = ({ navigation }) => {
 
       const { items } = response.data;
       //console.log(items);
-      dispatch(spotifyToken(token));
+      
       dispatch(spotifyPlaylists(items));
     } catch (error) {
       console.log("error", error.response.data);
@@ -110,24 +112,22 @@ const LoginScreen = ({ navigation }) => {
   useEffect(() => {
     if (!token || !youtubeToken) return;
     
-    dispatch(youtubeTokenStore(youtubeToken));
-    getUserInfo();
+      dispatch(spotifyToken(token));
+      dispatch(youtubeTokenStore(youtubeToken));
+    //getUserInfo();
     getUserPlaylists();
     setTimeout(
       () =>
-        navigation.navigate("Playlists", {
-          token: token,
-          other: "blaaa",
-        }),
+        navigation.navigate("Playlists"),
       500
     );
 
     // console.log("token", token);
     // console.log("access token", token);
-  }, [token, youtubeToken, getUserInfo, getUserPlaylists]);
+  }, [token, youtubeToken, getUserPlaylists]);
 
   return (
-    <KeyboardAvoidingView behavior="padding" style={styles.container}>
+    <View behavior="padding" style={styles.container}>
       <StatusBar style="light" />
       <Text
         style={{
@@ -157,7 +157,7 @@ const LoginScreen = ({ navigation }) => {
         }}
       />
       
-    </KeyboardAvoidingView>
+    </View>
   );
 };
 

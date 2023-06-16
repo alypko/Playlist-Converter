@@ -29,7 +29,7 @@ const Navigation = () => {
         <Stack.Screen
           name="Playlists"
           component={PlaylistsScreen}
-          options={{ headerShown: false }}
+          options={{ headerShown: false, gestureEnabled: false }}
         />
         <Stack.Screen
           name="SinglePlaylist"

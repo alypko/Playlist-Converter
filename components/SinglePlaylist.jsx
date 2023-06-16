@@ -1,9 +1,11 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Text, View } from "react-native";
 import { Button } from "@rneui/themed";
 import styled from "styled-components";
 import { Separator } from "./Separator";
+import DialogInput from "react-native-dialog-input";
+import { useState } from "react";
 
-const SinglePlaylistView = styled.View`
+const SinglePlaylistView = styled.KeyboardAvoidingView`
   flex-direction: column;
   width: 100%;
   background-color: rgba(255, 255, 255, 0.2);
@@ -30,11 +32,13 @@ const SinglePlaylistInfo = styled.View`
 `;
 
 export const SinglePlaylist = ({
+  stateChanger,
   title,
   imageUrl,
   totalSongs,
-  playlistHref,
 }) => {
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
+  const [newTitle, setNewTitle] = useState(title);
   return (
     <SinglePlaylistView>
       <SinglePlaylistTitle>Convert Playlist</SinglePlaylistTitle>
@@ -42,7 +46,7 @@ export const SinglePlaylist = ({
       <SinglePlaylistInfo>
         <SinglePlaylistImage source={{ uri: imageUrl }} />
         <View style={{ flex: 1 }}>
-          <Text style={{ color: "white", fontSize: 20 }}>{title} </Text>
+          <Text style={{ color: "white", fontSize: 20 }}>{newTitle} </Text>
           <Text style={{ color: "white" }}>{totalSongs} songs</Text>
         </View>
       </SinglePlaylistInfo>
@@ -53,7 +57,23 @@ export const SinglePlaylist = ({
           borderRadius: 12,
           borderColor: "rgba(255, 255, 255, 0.5)",
         }}
+        onPress={() =>{
+          setIsDialogVisible(true);
+        }}
       />
+      <DialogInput isDialogVisible={isDialogVisible} title={"Change Playlist Name"}
+        message={"Enter new name:"}
+        initValueTextInput={newTitle}
+        dialogStyle ={{backgroundColor: "rgba(52,52,52,255)"}}
+        modalStyle = {{backgroundColor: "rgba(0, 0, 0, 0.6)"}}
+        submitInput = {(inputText) =>{
+          if(!inputText) return;
+          setNewTitle(inputText);
+          stateChanger(inputText); 
+          setIsDialogVisible(false);
+        }}
+        closeDialog = {() => setIsDialogVisible(false)}>
+      </DialogInput>
     </SinglePlaylistView>
   );
 };

@@ -9,10 +9,12 @@ import { Playlist } from "../components/Playlist";
 import { Separator } from "../components/Separator";
 
 const PlaylistsScreen = ({ navigation }) => {
-  const token = useSelector((state) => state.spotify.token);
   const playlists = useSelector((state) => state.spotify.playlists);
   //console.log(playlists);
+  //console.log('Height on: ', Platform.OS, StatusBar.currentHeight);
   return (
+    
+    
     <FlatList
       contentContainerStyle={styles.container}
       data={playlists}
@@ -38,6 +40,7 @@ const PlaylistsScreen = ({ navigation }) => {
         </>
       )}
     />
+    
   );
 };
 
@@ -45,6 +48,6 @@ export default PlaylistsScreen;
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: StatusBar.currentHeight,
+    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 30,
   },
 });
